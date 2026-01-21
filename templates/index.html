@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<nav class="sidebar">
+    <div class="logo">
+        <i class="fa-solid fa-rocket"></i> InternChance
+    </div>
+    <ul class="nav-links">
+        <li class="active"><a href="#"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+        <li><a href="#"><i class="fa-solid fa-user-astronaut"></i> My Profile</a></li>
+        <li><a href="#" onclick="openJobModal()"><i class="fa-solid fa-briefcase"></i> Jobs <span class="badge">New</span></a></li>
+        <li><a href="#"><i class="fa-solid fa-gear"></i> Settings</a></li>
+    </ul>
+    <div class="user-profile">
+        <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User">
+        <div class="user-info">
+            <h4>Student User</h4>
+            <p>Free Plan</p>
+        </div>
+    </div>
+</nav>
+
+<main class="main-content">
+    <header>
+        <h2>Dashboard Overview (By Khurram Rashid) </h2>
+        <div class="header-actions">
+            <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
+            <button class="btn-primary" onclick="openChat()">Ask AI Coach</button>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="hero-card" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1600&q=80');">
+            <div class="hero-text">
+                <h1>Ready to Launch Your Career?</h1>
+                <p>Select your stream, analyze your stats, and find internships.</p>
+            </div>
+        </div>
+
+        <div class="grid-layout">
+            <div class="card input-card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-sliders"></i> Profile Metrics</h3>
+                </div>
+                <form id="prediction-form">
+                    <div class="form-group">
+                        <label>Academic Stream</label>
+                        <select id="stream-select" onchange="updateFormFields()">
+                            <option value="tech">Computer Science / Tech</option>
+                            <option value="bio">Biotech / Medical</option>
+                            <option value="commerce">Commerce / Finance</option>
+                            <option value="law">Law (LLB/LLM)</option>
+                            <option value="arts">Arts / Humanities</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>CGPA</label>
+                        <input type="number" id="cgpa" step="0.1" placeholder="e.g. 8.5" required>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label id="label-field1">DSA Solved</label>
+                            <input type="number" id="field1" placeholder="0-500" required>
+                        </div>
+                        <div class="form-group">
+                            <label id="label-field2">Projects</label>
+                            <input type="number" id="field2" placeholder="0-10" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label id="label-field3">Hackathons</label>
+                            <input type="number" id="field3" placeholder="0-10" required>
+                        </div>
+                        <div class="form-group">
+                            <label id="label-field4">Certifications</label>
+                            <input type="number" id="field4" placeholder="0-10" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-analyze">Analyze Probability</button>
+                </form>
+            </div>
+
+            <div class="card result-card">
+                <div id="initial-state">
+                    <img src="https://cdni.iconscout.com/illustration/premium/thumb/data-analysis-4565448-3791632.png" alt="Analyzing">
+                    <p>Enter your stats to see your standing.</p>
+                </div>
+                
+                <div id="prediction-result" class="hidden">
+                    <div class="score-circle">
+                        <span id="score-val">0%</span>
+                        <p>Chance</p>
+                    </div>
+                    <h3 id="prediction-text">Analysis Complete</h3>
+                    
+                    <div class="improvement-prompt">
+                        <p>Do you want a detailed AI improvement plan?</p>
+                        <button class="btn-improve" onclick="getImprovementPlan()">Give Detailed Explanation!! 🚀</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="ai-analysis-section" class="hidden">
+            <div class="card full-width analysis-card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-wand-magic-sparkles"></i> AI Personalized Roadmap</h3>
+                </div>
+                <div id="ai-content" class="markdown-body">
+                    <div class="loader">Generating your custom roadmap...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div id="chat-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-robot"></i> Intern Assistant</h3>
+            <span class="close" onclick="closeChat()">&times;</span>
+        </div>
+        <div id="chat-window">
+            <div class="message bot-msg">Hello! Ask me anything about interviews or skills.</div>
+        </div>
+        <div class="modal-input">
+            <input type="text" id="chat-msg" placeholder="Type your message...">
+            <button onclick="sendChat()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+
+<div id="job-search-modal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-magnifying-glass"></i> Find Opportunities</h3>
+            <span class="close" onclick="closeJobModal()">&times;</span>
+        </div>
+        
+        <div id="job-search-view" style="padding: 20px;">
+            <p>What kind of role are you looking for?</p>
+            <input type="text" id="job-role-input" class="modal-text-input" placeholder="e.g. Python Intern, Legal Clerk..." style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px;">
+            <button class="btn-primary" onclick="fetchJobs()" style="width: 100%;">Find Matches</button>
+        </div>
+
+        <div id="job-results-view" class="hidden" style="padding: 20px; max-height: 400px; overflow-y: auto;">
+            <div id="jobs-loader" style="text-align: center; color: #666;">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Finding best matches...
+            </div>
+            <div id="jobs-list">
+                </div>
+            <button onclick="resetJobSearch()" style="margin-top:15px; background:none; border:none; color:#666; cursor:pointer;">&larr; Search Again</button>
+        </div>
+    </div>
+</div>
+
+<button class="floating-chat-btn" onclick="openChat()">
+    <i class="fa-solid fa-comment-dots"></i>
+</button>
+
+{% endblock %}
