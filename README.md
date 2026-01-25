@@ -7,7 +7,7 @@ By combining Machine Learning (Random Forest) for probability prediction and Gen
 
 ---
 
-   ✨ Features 
+   ✨ Features  
 
     📊 1. AI Probability Predictor
 - Uses a trained Machine Learning model   (Random Forest) to analyze student stats.
